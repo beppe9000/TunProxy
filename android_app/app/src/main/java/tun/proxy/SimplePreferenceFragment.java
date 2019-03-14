@@ -15,6 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+
 public class SimplePreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
     public static final String VPN_CONNECTION_MODE = "vpn_connection_mode";
@@ -135,6 +141,19 @@ public class SimplePreferenceFragment extends PreferenceFragment implements Pref
             Context context = MyApplication.getInstance().getApplicationContext();
             PackageManager pm = context.getPackageManager();
             List<PackageInfo> installedPackages = pm.getInstalledPackages(PackageManager.GET_META_DATA);
+
+            // {FIX} 13-03-2019: every app of this type forgets to properly sort package names... ― Beppe9000
+            Comparator<PackageInfo> pack_comp = new Comparator<PackageInfo>() {
+                @Override public int compare(PackageInfo p1, PackageInfo p2) {				
+				PackageManager xpm = MyApplication.getInstance().getApplicationContext().getPackageManager();
+                String n1 = p1.applicationInfo.loadLabel(xpm).toString().toLowerCase();
+                String n2 = p2.applicationInfo.loadLabel(xpm).toString().toLowerCase();
+                return n1.compareTo(n2);
+                }
+            };
+             Collections.sort(installedPackages, pack_comp);
+            // {/FIX}
+            
             for (final PackageInfo pi : installedPackages) {
                 final Preference preference = buildPackagePreferences(pm, pi);
                 mRootPreferenceScreen.addPreference(preference);
