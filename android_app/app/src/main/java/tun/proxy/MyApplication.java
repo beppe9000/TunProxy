@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import tun.utils.CertificateUtil;
 
 import java.security.cert.CertificateEncodingException;
@@ -43,14 +44,14 @@ public class MyApplication extends Application {
 
     public enum VPNMode {DISALLOW, ALLOW};
 
-//    public final String vpn_mode_key[] = {VPNMode.DISALLOW.name(), VPNMode.ALLOW.name()};
+    public enum AppSortBy {APPNAME, PKGNAME};
 
     private final String pref_key[] = {"vpn_disallowed_application", "vpn_allowed_application"};
 
     public VPNMode loadVPNMode() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String vpn_mode = sharedPreferences.getString("vpn_connection_mode", MyApplication.VPNMode.DISALLOW.name());
-        return VPNMode.valueOf ( vpn_mode );
+        return VPNMode.valueOf(vpn_mode);
     }
 
     public void storeVPNMode(VPNMode mode) {
@@ -62,7 +63,7 @@ public class MyApplication extends Application {
 
     public Set<String> loadVPNApplication(VPNMode mode) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> preference = prefs.getStringSet(pref_key[mode.ordinal()], new HashSet<String>() );
+        Set<String> preference = prefs.getStringSet(pref_key[mode.ordinal()], new HashSet<String>());
         return preference;
     }
 
@@ -71,7 +72,7 @@ public class MyApplication extends Application {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putStringSet(pref_key[mode.ordinal()], set);
         editor.commit();
-        return ;
+        return;
     }
 
 }
